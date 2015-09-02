@@ -37,24 +37,24 @@ while(1):											#Infinite loop for cheking different urls
 			bytecode=error.read()
 
 		
-		#print type(bytecode)
-		bytecode.split('\n')
+		
+		bytecode.split('\n')        #######modifying response according to user needs
 		data=''
 		for i in bytecode:
 			data+=i.strip()
-		#print data
+		
 
-		openmatch='("state":"open",).*?("updated_at":")([0-9A-Z-:]{20})'			
-		#openmatch='("state": "open",)'
-		currentTime=datetime.datetime.now()
-		today=0
-		thisWeek=0
-		old=0
+		openmatch='("state":"open",).*?("updated_at":")([0-9A-Z-:]{20})'		###pattern for extracting the time of opened issues	
+	
+		currentTime=datetime.datetime.now()    #####current time in IST (my laptop timing)
+		today=0                       #########number of opened issues in less than 24 hours
+		thisWeek=0 					##########number of opened issues in between 24 hours and 7 days								
+		old=0 						########number of opened issues older than 7 days
 		a=re.findall(openmatch,data)
 		for k in a:
-			openedTime=datetime.datetime(int(k[2][:4]),int(k[2][5:7]),int(k[2][8:10]),int(k[2][11:13]),int(k[2][14:16]),int(k[2][17:19]))
-			timeDifference=(currentTime-openedTime).days*24+(currentTime-openedTime).seconds/3600-5.5
-			if(timeDifference<=24):
+			openedTime=datetime.datetime(int(k[2][:4]),int(k[2][5:7]),int(k[2][8:10]),int(k[2][11:13]),int(k[2][14:16]),int(k[2][17:19])) ##last opened time of issue
+			timeDifference=(currentTime-openedTime).days*24+(currentTime-openedTime).seconds/3600-5.5       #####time differnce in hours
+			if(timeDifference<=24): 
 				today+=1
 					###if number difference between current and last opened is under 1 Week						
 			elif(timeDifference>=24 and timeDifference<=168):
@@ -62,10 +62,10 @@ while(1):											#Infinite loop for cheking different urls
 					###if number difference between current and last opened is older than 1 week						
 			else:
 				old+=1
-		pagination=2
-		if(a):
+		pagination=2     #######index for page number of api request
+		if(a):     
 			while(1):
-				newUrl=url+'&page='+str(pagination)
+				newUrl=url+'&page='+str(pagination)         #########modified url for every api request
 				pagination+=1
 				try:
 					r=urllib2.urlopen(newUrl)							
@@ -79,7 +79,7 @@ while(1):											#Infinite loop for cheking different urls
 				data=''
 				for i in bytecode:
 					data+=i.strip()
-				openmatch='("state":"open",).*?("updated_at":")([0-9A-Z-:]{20})'			
+				openmatch='("state":"open",).*?("updated_at":")([0-9A-Z-:]{20})'		###pattern for extracting the time of opened issues		
 				#openmatch='("state": "open",)'
 				a=re.findall(openmatch,data)
 				if(a):
@@ -97,7 +97,7 @@ while(1):											#Infinite loop for cheking different urls
 							old+=1
 				else:
 					break	
-		print "total :%d" %(today+thisWeek+old)
+		print "Total number of open issues:                         %d" %(today+thisWeek+old)
         print "Number of  issued  opened within 24 hours:           %d"	%today
         print "Number of issues opened between 24 hours and 7 days: %d" %thisWeek
         print "Number of issues opened more than 7 days ago:        %d" %old
