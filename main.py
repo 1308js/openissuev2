@@ -1,6 +1,4 @@
 #!/usr/bin/python
-import json
-from pprint import pprint
 import urllib2   #module for http requests
 import re 		#module for regular expression
 import datetime  #module for time function
@@ -32,7 +30,8 @@ while(1):											#Infinite loop for cheking different urls
 			r=urllib2.urlopen(url)							
 			bytecode=r.read()									##reading the response of the request
 			r.close()				
-			print "Wait your request is being made::"							
+			print "Wait your request is being made::"	
+
 		except urllib2.HTTPError,error:
 			bytecode=error.read()
 
@@ -44,7 +43,7 @@ while(1):											#Infinite loop for cheking different urls
 			data+=i.strip()
 		
 
-		openmatch='("state":"open",).*?("updated_at":")([0-9A-Z-:]{20})'		###pattern for extracting the time of opened issues	
+		openmatch='("state":"open",).*?("created_at":")([0-9A-Z-:]{20})'		###pattern for extracting the time of opened issues	
 	
 		currentTime=datetime.datetime.now()    #####current time in IST (my laptop timing)
 		today=0                       #########number of opened issues in less than 24 hours
@@ -79,7 +78,7 @@ while(1):											#Infinite loop for cheking different urls
 				data=''
 				for i in bytecode:
 					data+=i.strip()
-				openmatch='("state":"open",).*?("updated_at":")([0-9A-Z-:]{20})'		###pattern for extracting the time of opened issues		
+				openmatch='("state":"open",).*?("created_at":")([0-9A-Z-:]{20})'		###pattern for extracting the time of opened issues		
 				#openmatch='("state": "open",)'
 				a=re.findall(openmatch,data)
 				if(a):
